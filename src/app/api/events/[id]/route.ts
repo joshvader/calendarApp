@@ -17,9 +17,10 @@ const patchSchema = z.object({
   return true;
 }, { message: 'end must be greater than start', path: ['end'] });
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const event = await prisma.event.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const event = await prisma.event.findUnique({ where: { id } });
     if (!event) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     return NextResponse.json(event);
   } catch {
@@ -27,12 +28,13 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const json = await req.json();
     const body = patchSchema.parse(json);
     const updated = await prisma.event.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: body.title,
         start: body.start,
@@ -52,9 +54,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await prisma.event.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await prisma.event.delete({ where: { id } });
     return new NextResponse(null, { status: 204 });
   } catch {
     return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 });
