@@ -24,3 +24,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Quitar estas líneas si existían:
+@import '@fullcalendar/daygrid/global.css';
+@import '@fullcalendar/timegrid/global.css';
+@import '@fullcalendar/list/global.css';
+*/
